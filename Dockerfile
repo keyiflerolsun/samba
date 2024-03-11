@@ -4,7 +4,7 @@ MAINTAINER David Personette <dperson@gmail.com>
 # Install samba
 RUN apk update && \
     apk upgrade && \
-    apk add --no-cache bash samba shadow tini tzdata && \
+    apk add --no-cache bash samba avahi shadow tini tzdata && \
     addgroup -S smb && \
     adduser -S -D -H -h /tmp -s /sbin/nologin -G smb -g 'Samba User' smbuser && \
     file="/etc/samba/smb.conf" && \
@@ -54,9 +54,16 @@ RUN apk update && \
     echo '   fruit:veto_appledouble = no' >>$file && \
     echo '   fruit:wipe_intentionally_left_blank_rfork = yes' >>$file && \
     echo '' >>$file && \
-    rm -rf /tmp/*
+    rm -rf /tmp/* \
+    && sed -i -e 's/#enable-dbus=.*/enable-dbus=no/g' \
+       -e 's/publish-hinfo=no/publish-hinfo=yes/g' \
+       -e 's/publish-workstation=no/publish-workstation=yes/g' \
+       -e 's/#publish-domain=yes/publish-domain=yes/g' \
+       /etc/avahi/avahi-daemon.conf \
+    && rm -vf /etc/avahi/services/*
 
 ADD samba.sh /usr/bin/samba.sh
+ADD _etc_avahi_services_samba.service /etc/avahi/services/samba.service
 
 EXPOSE 137/udp 138/udp 139 445
 
