@@ -55,11 +55,7 @@ RUN apk update && \
     echo '   fruit:wipe_intentionally_left_blank_rfork = yes' >>$file && \
     echo '' >>$file && \
     rm -rf /tmp/* \
-    && sed -i -e 's/#enable-dbus=.*/enable-dbus=no/g' \
-       -e 's/publish-hinfo=no/publish-hinfo=yes/g' \
-       -e 's/publish-workstation=no/publish-workstation=yes/g' \
-       -e 's/#publish-domain=yes/publish-domain=yes/g' \
-       /etc/avahi/avahi-daemon.conf \
+    && sed -i 's/#enable-dbus=.*/enable-dbus=no/g' /etc/avahi/avahi-daemon.conf \
     && rm -vf /etc/avahi/services/*
 
 ADD samba.sh /usr/bin/samba.sh
