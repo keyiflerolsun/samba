@@ -4,9 +4,9 @@ MAINTAINER David Personette <dperson@gmail.com>
 # Install samba
 RUN apk update && \
     apk upgrade && \
-    apk add bash samba shadow tini tzdata && \
+    apk add --no-cache bash samba shadow tini tzdata && \
     addgroup -S smb && \
-    adduser -S -D -H -h /tmp -s /sbin/nologin -G smb -g 'Samba User' smbuser &&\
+    adduser -S -D -H -h /tmp -s /sbin/nologin -G smb -g 'Samba User' smbuser && \
     file="/etc/samba/smb.conf" && \
     sed -i 's|^;* *\(log file = \).*|   \1/dev/stdout|' $file && \
     sed -i 's|^;* *\(load printers = \).*|   \1no|' $file && \
@@ -41,12 +41,12 @@ RUN apk update && \
     echo '   recycle:versions = yes' >>$file && \
     echo '' >>$file && \
     echo '   # Security' >>$file && \
-    echo '   client ipc max protocol = SMB3_11' >>$file && \
-    echo '   client ipc min protocol = SMB2' >>$file && \
+    echo '   client ipc max protocol = default' >>$file && \
+    echo '   client ipc min protocol = default' >>$file && \
     echo '   client max protocol = SMB3_11' >>$file && \
-    echo '   client min protocol = SMB2' >>$file && \
+    echo '   client min protocol = SMB2_02' >>$file && \
     echo '   server max protocol = SMB3_11' >>$file && \
-    echo '   server min protocol = SMB2' >>$file && \
+    echo '   server min protocol = SMB2_02' >>$file && \
     echo '' >>$file && \
     echo '   # Time Machine' >>$file && \
     echo '   fruit:delete_empty_adfiles = yes' >>$file && \
@@ -61,9 +61,8 @@ ADD samba.sh /usr/bin/samba.sh
 EXPOSE 137/udp 138/udp 139 445
 
 HEALTHCHECK --interval=60s --timeout=15s \
-            CMD smbclient -L \\localhost -U % -m SMB3
+    CMD smbclient -L \\localhost -U % -m SMB3
 
-VOLUME ["/etc", "/var/cache/samba", "/var/lib/samba", "/var/log/samba",\
-            "/run/samba"]
+VOLUME ["/etc", "/var/cache/samba", "/var/lib/samba", "/var/log/samba", "/run/samba"]
 
 ENTRYPOINT ["/sbin/tini", "--", "/usr/bin/samba.sh"]

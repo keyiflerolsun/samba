@@ -41,12 +41,12 @@ RUN apk --no-cache --no-progress upgrade && \
     echo '   recycle:versions = yes' >>$file && \
     echo '' >>$file && \
     echo '   # Security' >>$file && \
-    echo '   client ipc max protocol = SMB3_11' >>$file && \
-    echo '   client ipc min protocol = SMB2' >>$file && \
+    echo '   client ipc max protocol = default' >>$file && \
+    echo '   client ipc min protocol = default' >>$file && \
     echo '   client max protocol = SMB3_11' >>$file && \
-    echo '   client min protocol = SMB2' >>$file && \
+    echo '   client min protocol = SMB2_02' >>$file && \
     echo '   server max protocol = SMB3_11' >>$file && \
-    echo '   server min protocol = SMB2' >>$file && \
+    echo '   server min protocol = SMB2_02' >>$file && \
     echo '' >>$file && \
     echo '   # Time Machine' >>$file && \
     echo '   fruit:delete_empty_adfiles = yes' >>$file && \
@@ -56,14 +56,13 @@ RUN apk --no-cache --no-progress upgrade && \
     echo '' >>$file && \
     rm -rf /tmp/*
 
-COPY samba.sh /usr/bin/
+ADD samba.sh /usr/bin/samba.sh
 
 EXPOSE 137/udp 138/udp 139 445
 
 HEALTHCHECK --interval=60s --timeout=15s \
-            CMD smbclient -L \\localhost -U % -m SMB3
+    CMD smbclient -L \\localhost -U % -m SMB3
 
-VOLUME ["/etc", "/var/cache/samba", "/var/lib/samba", "/var/log/samba",\
-            "/run/samba"]
+VOLUME ["/etc", "/var/cache/samba", "/var/lib/samba", "/var/log/samba", "/run/samba"]
 
 ENTRYPOINT ["/sbin/tini", "--", "/usr/bin/samba.sh"]
