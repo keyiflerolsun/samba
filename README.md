@@ -1,4 +1,4 @@
-[![logo](https://raw.githubusercontent.com/dperson/samba/master/logo.jpg)](https://www.samba.org)
+[![logo](./logo.jpg)](https://www.samba.org)
 
 # Samba
 
