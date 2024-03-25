@@ -1,4 +1,4 @@
-[![logo](./logo.jpg)](https://www.samba.org)
+[![logo](https://raw.githubusercontent.com/keyiflerolsun/samba/master/logo.jpg)](https://www.samba.org)
 
 # Samba
 
