@@ -19,19 +19,4 @@
     <port>137</port>
   </service>
 
-  <service>
-    <type>_netbios-ns._udp</type>
-    <port>137</port>
-  </service>
-
-  <service>
-    <type>_netbios-dgm._udp</type>
-    <port>138</port>
-  </service>
-
-  <service>
-    <type>_netbios-ssn._tcp</type>
-    <port>139</port>
-  </service>
-
 </service-group>
