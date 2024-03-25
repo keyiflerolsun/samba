@@ -87,9 +87,13 @@ import() { local file="$1" name id
 # Return: result
 perms() { local i file=/etc/samba/smb.conf
     for i in $(awk -F ' = ' '/   path = / {print $2}' $file); do
-        chown -Rh smbuser. $i
-        find $i -type d ! -perm 775 -exec chmod 775 {} \;
-        find $i -type f ! -perm 0664 -exec chmod 0664 {} \;
+        chown -Rh smbuser. $i 2>/dev/null
+        if [ $? -ne 0 ]; then
+            echo "chown command failed for $i, skipping..."
+        else
+            find $i -type d ! -perm 775 -exec chmod 775 {} \; 2>/dev/null
+            find $i -type f ! -perm 0664 -exec chmod 0664 {} \; 2>/dev/null
+        fi
     done
 }
 export -f perms
