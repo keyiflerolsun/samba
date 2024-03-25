@@ -121,6 +121,24 @@ Any of the commands can be run at creation with `docker run` or later with
                 -s "example1 private share;/example1;no;no;no;example1" \
                 -s "example2 private share;/example2;no;no;no;example2"
 
+### Another example
+
+```bash
+docker run -d \           
+  --name=samba \
+  --restart=always \
+  --net=host \
+  -p 137:137/udp -p 138:138/udp \
+  -p 139:139 \
+  -p 445:445 \
+  -v ~/Downloads:/mount \
+  -e TZ=Europe/Istanbul \
+  ghcr.io/keyiflerolsun/samba:latest \
+  -w "WORKGROUP" -n -p \
+  -g "netbios name = SAMBA" \
+  -s "public;/mount;yes;no;yes;all;none;İndirilenler"
+```
+
 # User Feedback
 
 ## Troubleshooting
