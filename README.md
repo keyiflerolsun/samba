@@ -129,15 +129,15 @@ docker run -d \
   --restart=always \
   --net=host \
   -v ~/Videolar:/Videolar \
-  -v ~/Belgeler:/Belgeler \
+  -v ~/Resimler:/Resimler \
   -e TZ=Europe/Istanbul \
   -e USERID=1000 -e GROUPID=1000 \
   ghcr.io/keyiflerolsun/samba:latest \
   -w "WORKGROUP" -n -p \
   -g "netbios name = SAMBA" \
-  -u "Admin;Pass" \
-  -s "Videolar;/Videolar;yes;no;yes;all" \
-  -s "Belgeler;/Belgeler;yes;no;no;Admin"
+  -u "username;pass" \
+  -s "Videolar;/Videolar;yes;no;no;username" \
+  -s "Resimler;/Resimler;yes;no;yes;all"
 ```
 
 # User Feedback
