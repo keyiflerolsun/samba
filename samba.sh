@@ -187,6 +187,19 @@ widelinks() { local file=/etc/samba/smb.conf \
     sed -i 's/\(follow symlinks = yes\)/'"$replace"'/' $file
 }
 
+### avahi: enable or disable avahi service
+# Arguments:
+#   status) 'yes' to enable, 'no' to disable
+# Return: result
+avahi() { local status="$1"
+    if [[ "$status" == "no" ]]; then
+        pkill -f avahi-daemon 2>/dev/null || true
+        echo "Avahi service disabled"
+    else
+        echo "Avahi service enabled"
+    fi
+}
+
 ### usage: Help
 # Arguments:
 #   none)
@@ -195,6 +208,8 @@ usage() { local RC="${1:-0}"
     echo "Usage: ${0##*/} [-opt] [command]
 Options (fields in '[]' are optional, '<>' are required):
     -h          This help
+    -a \"<yes|no>\" Enable or disable Avahi service
+                required arg: \"<yes|no>\" default:'yes'
     -c \"<from:to>\" setup character mapping for file/directory names
                 required arg: \"<from:to>\" character mappings separated by ','
     -G \"<section;parameter>\" Provide generic section option for smb.conf
@@ -245,9 +260,10 @@ The 'command' (if provided and valid) will be run instead of samba
 [[ "${USERID:-""}" =~ ^[0-9]+$ ]] && usermod -u $USERID -o smbuser
 [[ "${GROUPID:-""}" =~ ^[0-9]+$ ]] && groupmod -g $GROUPID -o smb
 
-while getopts ":hc:G:g:i:nprs:Su:Ww:I:" opt; do
+while getopts ":ha:c:G:g:i:nprs:Su:Ww:I:" opt; do
     case "$opt" in
         h) usage ;;
+        a) AVAHI="$OPTARG" ;;
         c) charmap "$OPTARG" ;;
         G) eval generic $(sed 's/^/"/; s/$/"/; s/;/" "/g' <<< $OPTARG) ;;
         g) global "$OPTARG" ;;
@@ -297,5 +313,9 @@ elif ps -ef | egrep -v grep | grep -q smbd; then
     echo "Service already running, please restart container to apply changes"
 else
     [[ ${NMBD:-""} ]] && ionice -c 3 nmbd -D
-    avahi-daemon --no-rlimits & exec ionice -c 3 smbd -F --debug-stdout --no-process-group </dev/null
+    if [[ "${AVAHI:-yes}" == "no" ]]; then
+        exec ionice -c 3 smbd -F --debug-stdout --no-process-group </dev/null
+    else
+        avahi-daemon --no-rlimits & exec ionice -c 3 smbd -F --debug-stdout --no-process-group </dev/null
+    fi
 fi

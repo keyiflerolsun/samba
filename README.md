@@ -30,6 +30,8 @@ OR set local storage:
     Usage: samba.sh [-opt] [command]
     Options (fields in '[]' are optional, '<>' are required):
         -h          This help
+        -a "<yes|no>" Enable or disable Avahi service
+                    required arg: "<yes|no>" default:'yes'
         -c "<from:to>" setup character mapping for file/directory names
                     required arg: "<from:to>" character mappings separated by ','
         -G "<section;parameter>" Provide generic section option for smb.conf
@@ -76,6 +78,7 @@ OR set local storage:
 
 ENVIRONMENT VARIABLES
 
+ * `AVAHI` - Enable or disable Avahi service (default: 'yes')
  * `CHARMAP` - As above, configure character mapping
  * `GENERIC` - As above, configure a generic section option (See NOTE3 below)
  * `GLOBAL` - As above, configure a global option (See NOTE3 below)
@@ -102,6 +105,15 @@ container configured to use the hosts network stack.
 **NOTE3**: optionally supports additional variables starting with the same name,
 IE `SHARE` also will work for `SHARE2`, `SHARE3`... `SHAREx`, etc.
 
+**NOTE4 - Avahi Service**: By default, Avahi daemon runs to allow mDNS (Bonjour) 
+service discovery. This allows computers on your network to automatically discover 
+the Samba share. To disable Avahi:
+- Use `-a no` flag in docker run command, or
+- Set `AVAHI=no` environment variable
+
+Disabling Avahi can be useful if you want to use only IP-based connections or 
+reduce resource usage.
+
 ## Examples
 
 Any of the commands can be run at creation with `docker run` or later with
@@ -121,7 +133,7 @@ Any of the commands can be run at creation with `docker run` or later with
                 -s "example1 private share;/example1;no;no;no;example1" \
                 -s "example2 private share;/example2;no;no;no;example2"
 
-### Another example
+### Another example with Avahi disable
 
 ```bash
 docker run -d \
@@ -132,6 +144,7 @@ docker run -d \
   -v ~/Resimler:/Resimler \
   -e TZ=Europe/Istanbul \
   -e USERID=1000 -e GROUPID=1000 \
+  -e AVAHI=no \
   ghcr.io/keyiflerolsun/samba:latest \
   -w "WORKGROUP" -n -p \
   -g "netbios name = SAMBA" \

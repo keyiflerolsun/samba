@@ -5,6 +5,7 @@ services:
     image: dperson/samba
     environment:
       TZ: 'EST5EDT'
+      AVAHI: 'yes'
     networks:
       - default
     ports:
