@@ -3,20 +3,48 @@
 <service-group>
   <name replace-wildcards="yes">%h</name>
 
+  <!-- Apple Time Machine / AirDisk Support -->
   <service>
     <type>_adisk._tcp</type>
     <txt-record>sys=waMa=0,adVF=0x100</txt-record>
     <txt-record>dk0=adVN=Time Capsule,adVF=0x82</txt-record>
   </service>
 
+  <!-- NetBIOS Name Service (Port 137 UDP) -->
+  <service>
+    <type>_netbios-ns._udp</type>
+    <port>137</port>
+  </service>
+
+  <!-- NetBIOS Datagram Service (Port 138 UDP) -->
+  <service>
+    <type>_netbios-dgm._udp</type>
+    <port>138</port>
+  </service>
+
+  <!-- NetBIOS Session Service (Port 139 - Legacy SMB) -->
+  <service>
+    <type>_netbios._tcp</type>
+    <port>139</port>
+  </service>
+
+  <!-- SMB/CIFS Service (Port 445 - Modern SMB2/SMB3) -->
   <service>
     <type>_smb._tcp</type>
     <port>445</port>
+    <txt-record>vers=2.02,3.11</txt-record>
   </service>
 
+  <!-- CIFS Service (Common Internet File System) -->
   <service>
-    <type>_nmb._tcp</type>
-    <port>137</port>
+    <type>_cifs._tcp</type>
+    <port>445</port>
+  </service>
+
+  <!-- Device Info (for network discovery) -->
+  <service>
+    <type>_device-info._tcp</type>
+    <txt-record>model=Samba</txt-record>
   </service>
 
 </service-group>

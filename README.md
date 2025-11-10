@@ -124,19 +124,20 @@ Any of the commands can be run at creation with `docker run` or later with
 ### Another example
 
 ```bash
-docker run -d \           
+docker run -d \
   --name=samba \
   --restart=always \
   --net=host \
-  -p 137:137/udp -p 138:138/udp \
-  -p 139:139 \
-  -p 445:445 \
-  -v ~/Downloads:/mount \
+  -v ~/Videolar:/Videolar \
+  -v ~/Belgeler:/Belgeler \
   -e TZ=Europe/Istanbul \
+  -e USERID=1000 -e GROUPID=1000 \
   ghcr.io/keyiflerolsun/samba:latest \
   -w "WORKGROUP" -n -p \
   -g "netbios name = SAMBA" \
-  -s "public;/mount;yes;no;yes;all;none;İndirilenler"
+  -u "Admin;Pass" \
+  -s "Videolar;/Videolar;yes;no;yes;all" \
+  -s "Belgeler;/Belgeler;yes;no;no;Admin"
 ```
 
 # User Feedback
